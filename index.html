@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma de Arte LAN & Gestor de Salas</title>
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0d0f18;
+    color:white;
+    min-height:100vh;
+}
+
+button{
+    font:inherit;
+    cursor:pointer;
+}
+
+.hero{
+    min-height:100vh;
+    padding:20px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: radial-gradient(circle at 50% 20%, #1f295d 0%, #0d0f18 80%);
+}
+
+.app{
+    width:min(1150px,100%);
+    background: rgba(22, 27, 46, 0.95);
+    border: 2px solid #5b63b7;
+    border-radius: 24px;
+    box-shadow: 0 0 50px rgba(91, 99, 183, 0.3);
+    overflow:hidden;
+}
+
+header{
+    padding: 20px;
+    text-align:center;
+    background: linear-gradient(90deg, #181d36, #28305c, #181d36);
+    border-bottom: 2px solid #3d4680;
+}
+
+.badge{
+    display:inline-block;
+    background:#ff007f;
+    color: white;
+    padding:6px 16px;
+    border-radius:999px;
+    font-size:.8rem;
+    font-weight: bold;
+    letter-spacing:1px;
+    box-shadow: 0 0 10px rgba(255,0,127,0.5);
+}
+
+h1{
+    font-size:clamp(1.8rem,4vw,2.8rem);
+    margin:10px 0 5px;
+    background: linear-gradient(45deg, #00f2fe, #4facfe, #00ff87);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle{
+    color:#a5b4fc;
+    max-width:800px;
+    margin:auto;
+    font-size:0.95rem;
+}
+
+.stats{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+.stat{
+    background:#121629;
+    border:1px solid #3d4680;
+    padding:8px 18px;
+    border-radius:14px;
+    font-size: 1rem;
+}
+
+nav{
+    display:flex;
+    gap:8px;
+    padding:12px;
+    justify-content: center;
+    background:#121629;
+    flex-wrap: wrap;
+}
+
+nav button{
+    border:0;
+    background:#202744;
+    color:#dce6ff;
+    padding:10px 18px;
+    border-radius:12px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav button.active{
+    background: linear-gradient(45deg, #00f2fe, #4facfe);
+    color:#0d0f18;
+    box-shadow: 0 0 15px rgba(0,242,254,0.4);
+}
+
+main{
+    padding:25px;
+}
+
+.screen{
+    display:none;
+}
+
+.screen.active{
+    display:block;
+}
+
+.card{
+    background:#171d33;
+    border:1px solid #313a68;
+    border-radius:20px;
+    padding:25px;
+    position: relative;
+}
+
+.start-box{
+    max-width:700px;
+    margin:0 auto;
+}
+
+.tab-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: #0d101d;
+    border: 1px solid #3d4680;
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.tab-btn.active {
+    background: #ff007f;
+    border-color: #ff007f;
+}
+
+.form-group{
+    text-align:left;
+    margin:15px 0;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    color:#a5b4fc;
+    font-weight:bold;
+}
+
+input, select, textarea{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #3d4680;
+    background:#0d101d;
+    color:white;
+    font-size:1rem;
+}
+
+.primary{
+    background: linear-gradient(45deg, #ff007f, #7928ca);
+    color:white;
+    border:0;
+    padding:15px 25px;
+    border-radius:12px;
+    font-weight:bold;
+    font-size: 1.1rem;
+    transition:.3s;
+    width: 100%;
+    box-shadow: 0 0 20px rgba(255,0,127,0.4);
+}
+
+.primary:hover{
+    transform:scale(1.02);
+}
+
+/* GALERÍA DE ARTE DOCENTE */
+.gallery-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+@media (max-width: 800px) {
+    .gallery-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.artwork-frame {
+    background: #0d101d;
+    border: 3px solid #ff007f;
+    border-radius: 18px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+.art-image-real {
+    width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 2px solid #3d4680;
+    margin: 10px 0;
+    background-color: #05070c;
+}
+
+.options-grid {
+    display: grid;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.option-btn {
+    padding: 14px;
+    text-align: left;
+    background: #202744;
+    color: white;
+    border: 1px solid #3d4680;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: .2s;
+}
+
+.option-btn:hover {
+    background: #2f3861;
+    border-color: #00f2fe;
+}
+
+.option-btn.correct {
+    background: #105936;
+    border-color: #00ff87;
+}
+
+.option-btn.wrong {
+    background: #6e1c24;
+    border-color: #ff4d4d;
+}
+
+/* LABERINTO */
+canvas#mazeCanvas {
+    background: #0d101d;
+    border: 3px solid #00f2fe;
+    border-radius: 12px;
+    margin: 15px auto;
+    display: block;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 50px);
+    gap: 10px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.arrow-btn {
+    width: 50px;
+    height: 50px;
+    background: #202744;
+    border: 1px solid #00f2fe;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* TALLER DE DIBUJO INTEGRADO */
+.draw-container-box {
+    background: #121427;
+    border: 1px solid #25284e;
+    border-radius: 16px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .draw-container-box {
+        grid-template-columns: 1fr;
+    }
+}
+
+.canvas-area {
+    border: 2px dashed #00f2fe;
+    border-radius: 14px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0d0e1c;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.colors-palette {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.color-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s;
+}
+
+.color-dot:hover, .color-dot.active {
+    transform: scale(1.2);
+    border-color: #ffffff;
+}
+
+.size-control {
+    background: #1b1d3a;
+    border-radius: 10px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #a0a5d0;
+}
+
+.size-control input[type=range] {
+    width: 70px;
+    accent-color: #00f2fe;
+}
+
+canvas#paintCanvas {
+    background: #ffffff;
+    border-radius: 8px;
+    cursor: crosshair;
+    touch-action: none;
+    max-width: 100%;
+}
+
+.btn-clear {
+    margin-top: 15px;
+    background: #1b1d3a;
+    color: #c0c6f0;
+    border: 1px solid #33386d;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.btn-clear:hover {
+    background: #282c5a;
+    color: white;
+}
+
+.publish-panel {
+    background: #12152b;
+    border: 1px solid #282d5a;
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.publish-panel h3 {
+    margin: 0 0 15px 0;
+    color: #00f2fe;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-group-sm {
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.form-group-sm label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #c0c6f0;
+    margin-bottom: 5px;
+}
+
+.form-group-sm input, .form-group-sm textarea {
+    width: 100%;
+    background: #090a15;
+    border: 1px solid #282d5a;
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.form-group-sm textarea {
+    resize: none;
+    height: 70px;
+}
+
+.btn-submit-art {
+    margin-top: auto;
+    background: linear-gradient(90deg, #00f2fe, #00d2b8);
+    color: #08080e;
+    border: 0;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+    transition: 0.2s;
+}
+
+.btn-submit-art:hover {
+    transform: scale(1.02);
+}
+
+/* GALERÍA DE DIBUJOS DEL ESTUDIANTE Y MENÚ DE 3 PUNTOS */
+.students-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.student-art-card {
+    background: #0d101d;
+    border: 1px solid #3d4680;
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.menu-options-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.three-dots-btn {
+    background: rgba(32, 39, 68, 0.8);
+    color: white;
+    border: 1px solid #3d4680;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.three-dots-btn:hover {
+    background: #ff007f;
+    border-color: #ff007f;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    background: #181d36;
+    border: 1px solid #ff4d4d;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 10;
+    overflow: hidden;
+    min-width: 140px;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item-delete {
+    background: transparent;
+    color: #ff4d4d;
+    border: 0;
+    padding: 10px 14px;
+    width: 100%;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.dropdown-item-delete:hover {
+    background: #ff4d4d;
+    color: white;
+}
+
+.student-art-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 2px solid #5b63b7;
+}
+
+.student-art-card h4 {
+    margin: 10px 0 5px 0;
+    color: #00f2fe;
+}
+
+.student-art-card p {
+    font-size: 0.85rem;
+    color: #a5b4fc;
+    margin: 2px 0;
+}
+
+.grading-box {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.grading-box select {
+    padding: 6px;
+    font-size: 0.85rem;
+}
+
+.grading-box button {
+    background: #00ff87;
+    color: #000;
+    border: 0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #0d101d;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.leaderboard-table th, .leaderboard-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #202744;
+}
+
+.leaderboard-table th {
+    background: #202744;
+    color: #00f2fe;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+<div class="app">
+
+<header>
+<span class="badge">SECRETARÍA DE EDUCACIÓN DEL DISTRITO · BOGOTÁ D.C.</span>
+<h1>🎨 GESTOR DE SALAS & GALERÍA MULTIJUGADOR</h1>
+<p class="subtitle">Crea tu propia sala de arte, sube la imagen que quieras y compite en vivo con tu curso.</p>
+
+<div class="stats">
+<div class="stat">🏆 Puntos: <b id="totalScore">0</b></div>
+<div class="stat">🌐 Sala Activa: <b id="roomCodeDisplay">Ninguna</b></div>
+</div>
+</header>
+
+<nav>
+<button class="active" id="navHome" onclick="show('home',this)">🏠 Menú Principal</button>
+<button id="navGame" onclick="show('quiz',this)">🖼️ Exposición de Arte</button>
+<button id="navMaze" onclick="show('maze',this)">🌀 Laberinto</button>
+<button id="navDraw" onclick="show('draw',this)">👨‍🎨 Taller de Dibujo</button>
+<button id="navGallery" onclick="show('gallery',this)">🎨 Galería de Dibujos</button>
+<button id="navTop" onclick="show('ranking',this)">🏆 Tabla LAN</button>
+</nav>
+
+<main>
+
+<!-- MENÚ PRINCIPAL: CREAR O UNIRSE A SALA -->
+<section id="home" class="screen active">
+<div class="card start-box">
+    <div class="tab-selector">
+        <button class="tab-btn active" id="tabStudent" onclick="switchRole('student')">👨‍🎓 Modo Estudiante (Unirse)</button>
+        <button class="tab-btn" id="tabTeacher" onclick="switchRole('teacher')">👑 Modo Owner / Profesor (Crear Sala)</button>
+    </div>
+
+    <!-- FORMULARIO ESTUDIANTE -->
+    <div id="studentForm">
+        <h2>Unirse a una Sala de Clase</h2>
+        <div class="form-group">
+            <label for="studentName">👤 Tu Nombre:</label>
+            <input id="studentName" type="text" placeholder="Ej: Camilo Pérez" maxlength="30">
+        </div>
+
+        <div class="form-group">
+            <label for="joinRoomCode">🔑 Código de Sala LAN:</label>
+            <input id="joinRoomCode" type="text" placeholder="Ej: ARTE-301" value="ARTE-301">
+        </div>
+
+        <button class="primary" onclick="joinRoom()">🚀 UNIRSE A LA SALA</button>
+    </div>
+
+    <!-- FORMULARIO PROFESOR / OWNER -->
+    <div id="teacherForm" style="display:none;">
+        <h2>👑 Crear Nueva Sala de Arte</h2>
+        
+        <div class="form-group">
+            <label for="createRoomCode">🔑 Código para la Sala:</label>
+            <input id="createRoomCode" type="text" value="ARTE-301">
+        </div>
+
+        <div class="form-group">
+            <label for="artTitleInput">🖼️ Título de la Obra de Arte:</label>
+            <input id="artTitleInput" type="text" value="Obra de Arte Misteriosa">
+        </div>
+
+        <div class="form-group">
+            <label>🖼️ Imagen de la Obra (Elige una opción):</label>
+            <input id="artFileInput" type="file" accept="image/*" style="margin-bottom:8px;">
+            <input id="artUrlInput" type="text" placeholder="O pega el enlace URL de la imagen aquí">
+        </div>
+
+        <div class="form-group">
+            <label for="questionInput">🎯 Pregunta de Trivia sobre la obra:</label>
+            <input id="questionInput" type="text" value="¿Qué emoción transmite esta obra de arte?">
+        </div>
+
+        <div class="form-group">
+            <label>✏️ Tres Opciones de Respuesta (Marca cuál es la correcta):</label>
+            <input id="opt0" type="text" value="Alegría y creatividad" style="margin-bottom:5px;">
+            <input id="opt1" type="text" value="Tristeza profunda" style="margin-bottom:5px;">
+            <input id="opt2" type="text" value="Miedo extremo" style="margin-bottom:5px;">
+            <label style="font-weight:normal;">Respuesta Correcta:</label>
+            <select id="correctOpt">
+                <option value="0">Opción 1</option>
+                <option value="1">Opción 2</option>
+                <option value="2">Opción 3</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="drawPromptInput">🎨 Reto de Dibujo para los niños:</label>
+            <input id="drawPromptInput" type="text" value="Dibuja esta obra pero en el espacio exterior con un astronauta">
+        </div>
+
+        <button class="primary" onclick="createRoom()">✨ GUARDAR Y CREAR SALA LAN</button>
+    </div>
+</div>
+</section>
+
+<!-- GALERÍA DE ARTE -->
+<section id="quiz" class="screen">
+<div class="card">
+    <div class="gallery-container">
+        <div class="artwork-frame">
+            <span class="badge">EXPOSICIÓN PRINCIPAL</span>
+            <img id="artImageDisplay" class="art-image-real" src="" alt="Cargando Obra de Arte...">
+            <h3 id="artTitleDisplay" style="color:#00f2fe; margin:5px 0;">Título de la Obra</h3>
+        </div>
+
+        <div>
+            <h3 style="color:#00f2fe;">🎯 Desafío Curatorial:</h3>
+            <p id="artQuestionDisplay" style="font-size:1.1rem; line-height:1.5;">¿Pregunta sobre la obra?</p>
+
+            <div class="options-grid" id="optionsContainer"></div>
+            <div id="feedback" style="margin-top:15px; font-weight:bold; min-height:30px;"></div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- LABERINTO -->
+<section id="maze" class="screen">
+<div class="card" style="text-align:center;">
+    <h2>🌀 Minijuego: El Laberinto de la Galería</h2>
+    <p style="color:#a5b4fc;">Llega hasta la obra de arte (🖼️) evitando los muros.</p>
+    
+    <canvas id="mazeCanvas" width="300" height="300"></canvas>
+
+    <div class="controls-grid">
+        <div></div>
+        <button class="arrow-btn" onclick="movePlayer(0, -1)">⬆️</button>
+        <div></div>
+        <button class="arrow-btn" onclick="movePlayer(-1, 0)">⬅️</button>
+        <button class="arrow-btn" onclick="movePlayer(0, 1)">⬇️</button>
+        <button class="arrow-btn" onclick="movePlayer(1, 0)">➡️</button>
+    </div>
+
+    <div id="mazeMessage" style="font-weight:bold; color:#00ff87; height:25px;"></div>
+</div>
+</section>
+
+<!-- TALLER DE DIBUJO -->
+<section id="draw" class="screen">
+<div class="card">
+    <div style="text-align:center; margin-bottom: 15px;">
+        <span class="badge" style="background:#ffde59; color:#000;">🎨 RETO DE DIBUJO DE LA SALA</span>
+        <h2 id="currentTaskDisplay" style="color:#00f2fe; margin-top:10px;">Reto de dibujo</h2>
+    </div>
+
+    <div class="draw-container-box">
+        <div class="canvas-area">
+            <div class="toolbar">
+                <div class="colors-palette" id="palette">
+                    <div class="color-dot active" style="background: #000000;" onclick="selectColor('#000000', this)"></div>
+                    <div class="color-dot" style="background: #ff3b30;" onclick="selectColor('#ff3b30', this)"></div>
+                    <div class="color-dot" style="background: #ff9500;" onclick="selectColor('#ff9500', this)"></div>
+                    <div class="color-dot" style="background: #ffcc00;" onclick="selectColor('#ffcc00', this)"></div>
+                    <div class="color-dot" style="background: #34c759;" onclick="selectColor('#34c759', this)"></div>
+                    <div class="color-dot" style="background: #5ac8fa;" onclick="selectColor('#5ac8fa', this)"></div>
+                    <div class="color-dot" style="background: #5856d6;" onclick="selectColor('#5856d6', this)"></div>
+                    <div class="color-dot" style="background: #ff2d55;" onclick="selectColor('#ff2d55', this)"></div>
+                    <div class="color-dot" style="background: #ffffff;" onclick="selectColor('#ffffff', this)"></div>
+                </div>
+
+                <div class="size-control">
+                    <span>🖌️ Tamaño:</span>
+                    <input type="range" id="brushSize" min="2" max="25" value="6">
+                </div>
+            </div>
+
+            <canvas id="paintCanvas" width="500" height="320"></canvas>
+
+            <button class="btn-clear" onclick="clearCanvas()">
+                🗑️ Limpiar Lienzo
+            </button>
+        </div>
+
+        <div class="publish-panel">
+            <h3>🚀 Publicar en Galería</h3>
+
+            <div class="form-group-sm">
+                <label for="authorName">Tu Nombre:</label>
+                <input type="text" id="authorName" placeholder="Ej. Lucía Martínez">
+            </div>
+
+            <div class="form-group-sm">
+                <label for="artTitle">Título del Dibujo:</label>
+                <input type="text" id="artTitle" placeholder="Ej. Un día en el parque">
+            </div>
+
+            <div class="form-group-sm">
+                <label for="artDesc">Breve descripción:</label>
+                <textarea id="artDesc" placeholder="¿Qué dibujaste hoy?"></textarea>
+            </div>
+
+            <button class="btn-submit-art" onclick="submitDrawing()">
+                ✨ Subir a la Exposición (+300 pts)
+            </button>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- GALERÍA DE OBRAS DE ESTUDIANTES PARA EVALUAR CON CONFIGURACIÓN DE MODERACIÓN -->
+<section id="gallery" class="screen">
+<div class="card">
+    <div style="text-align:center;">
+        <h2>🎨 Exposiciones y Obras del Taller de Dibujo</h2>
+        <p style="color:#a5b4fc;">Aquí podrás ver todos los dibujos realizados por los niños para calificarlos o moderarlos.</p>
+    </div>
+
+    <div id="studentsGallery" class="students-gallery-grid">
+        <!-- Los dibujos guardados se renderizarán dinámicamente aquí -->
+    </div>
+</div>
+</section>
+
+<!-- TABLA MULTIJUGADOR -->
+<section id="ranking" class="screen">
+<div class="card" style="text-align:center;">
+<h2>🏆 Tabla de Posiciones de la Sala LAN - Top 35</h2>
+
+<div class="leaderboard-container">
+<table class="leaderboard-table">
+<thead>
+<tr>
+<th>#</th>
+<th>Estudiante</th>
+<th>Código de Sala</th>
+<th>Puntuación</th>
+</tr>
+</thead>
+<tbody id="leaderboardBody">
+</tbody>
+</table>
+</div>
+
+<div style="margin-top:20px;">
+<button class="primary" style="width:auto" onclick="location.reload()">🔄 Cambiar de Sala / Volver al Inicio</button>
+</div>
+</div>
+</section>
+
+</main>
+
+</div>
+</div>
+
+<script>
+let currentRoomData = null;
+let activeRoomCode = "";
+let playerName = "";
+let score = 0;
+
+// VARIABLES DEL CANVAS DIBUJO
+let canvas, ctx, painting = false, currentColor = "#000000";
+
+// LABERINTO
+const mazeGrid = [
+    [0, 0, 1, 0, 0],
+    [1, 0, 1, 0, 1],
+    [0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 0],
+    [0, 0, 0, 1, 2]
+];
+let playerPos = { x: 0, y: 0 };
+
+function switchRole(role){
+    if(role === 'student'){
+        document.getElementById('studentForm').style.display = 'block';
+        document.getElementById('teacherForm').style.display = 'none';
+        document.getElementById('tabStudent').classList.add('active');
+        document.getElementById('tabTeacher').classList.remove('active');
+    } else {
+        document.getElementById('studentForm').style.display = 'none';
+        document.getElementById('teacherForm').style.display = 'block';
+        document.getElementById('tabTeacher').classList.add('active');
+        document.getElementById('tabStudent').classList.remove('active');
+    }
+}
+
+// CREAR SALA POR EL OWNER / PROFESOR
+function createRoom(){
+    const code = document.getElementById("createRoomCode").value.trim().toUpperCase();
+    const title = document.getElementById("artTitleInput").value.trim();
+    const question = document.getElementById("questionInput").value.trim();
+    const opt0 = document.getElementById("opt0").value.trim();
+    const opt1 = document.getElementById("opt1").value.trim();
+    const opt2 = document.getElementById("opt2").value.trim();
+    const correctOpt = parseInt(document.getElementById("correctOpt").value);
+    const drawPrompt = document.getElementById("drawPromptInput").value.trim();
+    
+    const fileInput = document.getElementById("artFileInput");
+    const urlInput = document.getElementById("artUrlInput").value.trim();
+
+    if(!code || !title){
+        alert("⚠️ Por favor completa el código de sala y el título de la obra.");
+        return;
+    }
+
+    let imageSrc = urlInput || "https://picsum.photos/600/400";
+
+    const saveAndAlert = (imgData) => {
+        const roomObj = {
+            code,
+            title,
+            image: imgData,
+            question,
+            options: [opt0, opt1, opt2],
+            correct: correctOpt,
+            drawPrompt
+        };
+
+        localStorage.setItem("room_" + code, JSON.stringify(roomObj));
+        alert(`✅ ¡Sala "${code}" creada con éxito!\nAhora los estudiantes pueden unirse usando este código.`);
+        document.getElementById("joinRoomCode").value = code;
+        switchRole('student');
+    };
+
+    if(fileInput.files && fileInput.files[0]){
+        const reader = new FileReader();
+        reader.onload = function(e){
+            saveAndAlert(e.target.result);
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    } else {
+        saveAndAlert(imageSrc);
+    }
+}
+
+// UNIRSE A LA SALA COMO ESTUDIANTE
+function joinRoom(){
+    playerName = document.getElementById("studentName").value.trim();
+    activeRoomCode = document.getElementById("joinRoomCode").value.trim().toUpperCase();
+
+    if(!playerName){
+        alert("✏️ Por favor ingresa tu nombre.");
+        return;
+    }
+
+    const savedRoom = localStorage.getItem("room_" + activeRoomCode);
+    if(!savedRoom){
+        alert(`❌ La sala "${activeRoomCode}" no existe. Pídele al Profesor que la cree en el "Modo Owner".`);
+        return;
+    }
+
+    currentRoomData = JSON.parse(savedRoom);
+    document.getElementById("roomCodeDisplay").textContent = activeRoomCode;
+
+    score = 0;
+    document.getElementById("totalScore").textContent = "0";
+
+    // Pre-llenar el nombre en el taller de arte
+    document.getElementById("authorName").value = playerName;
+
+    show('quiz');
+    renderQuiz();
+    initCanvas();
+    initMaze();
+}
+
+function renderQuiz(){
+    document.getElementById("artImageDisplay").src = currentRoomData.image;
+    document.getElementById("artTitleDisplay").textContent = currentRoomData.title;
+    document.getElementById("artQuestionDisplay").textContent = currentRoomData.question;
+    document.getElementById("feedback").textContent = "";
+
+    const container = document.getElementById("optionsContainer");
+    container.innerHTML = "";
+
+    currentRoomData.options.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.classList.add("option-btn");
+        btn.textContent = `${String.fromCharCode(65 + index)}. ${opt}`;
+        btn.onclick = () => selectOption(index, btn);
+        container.appendChild(btn);
+    });
+}
+
+function selectOption(choice, btn){
+    const buttons = document.querySelectorAll(".option-btn");
+    buttons.forEach(b => b.disabled = true);
+
+    if(choice === currentRoomData.correct){
+        score += 300;
+        btn.classList.add("correct");
+        document.getElementById("feedback").innerHTML = "<span style='color:#00ff87;'>✅ ¡Excelente Respuesta! (+300 pts)</span>";
+    } else {
+        btn.classList.add("wrong");
+        buttons[currentRoomData.correct].classList.add("correct");
+        document.getElementById("feedback").innerHTML = "<span style='color:#ff4d4d;'>❌ Respuesta Incorrecta.</span>";
+    }
+
+    document.getElementById("totalScore").textContent = score;
+
+    setTimeout(() => {
+        show('maze', document.getElementById("navMaze"));
+    }, 1800);
+}
+
+// LABERINTO
+function initMaze(){
+    playerPos = { x: 0, y: 0 };
+    drawMaze();
+}
+
+function drawMaze(){
+    const mCanvas = document.getElementById("mazeCanvas");
+    const mCtx = mCanvas.getContext("2d");
+    const cellSize = 60;
+
+    mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+
+    for(let r=0; r<5; r++){
+        for(let c=0; c<5; c++){
+            if(mazeGrid[r][c] === 1){
+                mCtx.fillStyle = "#3d4680";
+                mCtx.fillRect(c*cellSize, r*cellSize, cellSize-2, cellSize-2);
+            } else if(mazeGrid[r][c] === 2){
+                mCtx.fillStyle = "#ffde59";
+                mCtx.fillRect(c*cellSize, r*cellSize, cellSize-2, cellSize-2);
+                mCtx.font = "24px Arial";
+                mCtx.fillText("🖼️", c*cellSize + 15, r*cellSize + 38);
+            }
+        }
+    }
+
+    mCtx.fillStyle = "#00f2fe";
+    mCtx.beginPath();
+    mCtx.arc(playerPos.x * cellSize + 30, playerPos.y * cellSize + 30, 20, 0, Math.PI * 2);
+    mCtx.fill();
+}
+
+function movePlayer(dx, dy){
+    const newX = playerPos.x + dx;
+    const newY = playerPos.y + dy;
+
+    if(newX >= 0 && newX < 5 && newY >= 0 && newY < 5){
+        if(mazeGrid[newY][newX] !== 1){
+            playerPos.x = newX;
+            playerPos.y = newY;
+            drawMaze();
+
+            if(mazeGrid[newY][newX] === 2){
+                score += 200;
+                document.getElementById("totalScore").textContent = score;
+                document.getElementById("mazeMessage").textContent = "🎉 ¡Obra Rescatada del Laberinto! (+200 pts)";
+                setTimeout(() => {
+                    document.getElementById("currentTaskDisplay").textContent = `"${currentRoomData.drawPrompt}"`;
+                    show('draw', document.getElementById("navDraw"));
+                }, 1500);
+            }
+        }
+    }
+}
+
+// CANVAS DIBUJO
+function initCanvas(){
+    canvas = document.getElementById("paintCanvas");
+    ctx = canvas.getContext("2d");
+
+    const newCanvas = canvas.cloneNode(true);
+    canvas.parentNode.replaceChild(newCanvas, canvas);
+    canvas = newCanvas;
+    ctx = canvas.getContext("2d");
+
+    canvas.addEventListener("mousedown", startPosition);
+    canvas.addEventListener("mouseup", finishedPosition);
+    canvas.addEventListener("mousemove", draw);
+
+    canvas.addEventListener("touchstart", (e) => { 
+        e.preventDefault();
+        startPosition(e.touches[0]); 
+    }, {passive: false});
+    canvas.addEventListener("touchend", finishedPosition);
+    canvas.addEventListener("touchmove", (e) => { 
+        e.preventDefault();
+        draw(e.touches[0]); 
+    }, {passive: false});
+}
+
+function startPosition(e){ painting = true; draw(e); }
+function finishedPosition(){ painting = false; ctx.beginPath(); }
+
+function draw(e){
+    if(!painting) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const size = document.getElementById("brushSize").value;
+
+    ctx.lineWidth = size;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = currentColor;
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+function selectColor(color, element) {
+    currentColor = color;
+    document.querySelectorAll(".color-dot").forEach(el => el.classList.remove("active"));
+    element.classList.add("active");
+}
+
+function clearCanvas(){ if(ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+function submitDrawing(){
+    const author = document.getElementById("authorName").value.trim() || playerName || "Anónimo";
+    const title = document.getElementById("artTitle").value.trim() || "Obra sin título";
+    const desc = document.getElementById("artDesc").value.trim() || "Sin descripción";
+    const imageData = canvas.toDataURL();
+
+    const newArt = {
+        id: Date.now(),
+        author,
+        title,
+        desc,
+        imageData,
+        grade: "Sin calificar",
+        room: activeRoomCode || "GENERAL"
+    };
+
+    let galleryData = JSON.parse(localStorage.getItem("gallery_drawings") || "[]");
+    galleryData.unshift(newArt);
+    localStorage.setItem("gallery_drawings", JSON.stringify(galleryData));
+
+    score += 300;
+    document.getElementById("totalScore").textContent = score;
+    alert("🎨 ¡Dibujo publicado en la Galería de la clase! (+300 pts)");
+    show('gallery', document.getElementById("navGallery"));
+}
+
+// FUNCIONES DE LA GALERÍA Y MENÚ DE 3 PUNTOS PARA ELIMINAR OBRAS
+function renderGallery(){
+    const galleryContainer = document.getElementById("studentsGallery");
+    galleryContainer.innerHTML = "";
+    
+    let galleryData = JSON.parse(localStorage.getItem("gallery_drawings") || "[]");
+
+    if(galleryData.length === 0){
+        galleryContainer.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:#a5b4fc;'>Aún no hay dibujos publicados. ¡Sé el primero en hacer uno en el Taller!</p>";
+        return;
+    }
+
+    galleryData.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "student-art-card";
+        card.innerHTML = `
+            <div class="menu-options-container">
+                <button class="three-dots-btn" onclick="toggleMenu(event, ${item.id})">⋮</button>
+                <div class="dropdown-menu" id="dropdown-${item.id}">
+                    <button class="dropdown-item-delete" onclick="deleteArt(${item.id})">
+                        🗑️ Eliminar Obra
+                    </button>
+                </div>
+            </div>
+
+            <img src="${item.imageData}" alt="${item.title}">
+            <h4>${item.title}</h4>
+            <p><b>Autor:</b> ${item.author}</p>
+            <p style="font-size:0.75rem; color:#808bbd;">${item.desc}</p>
+            <p style="margin-top:5px; color:#00ff87;"><b>Calificación:</b> <span id="grade-${item.id}">${item.grade}</span></p>
+            
+            <div class="grading-box">
+                <select id="select-grade-${item.id}">
+                    <option value="⭐⭐⭐⭐⭐ (5.0 / Excelente)">⭐⭐⭐⭐⭐ (5.0)</option>
+                    <option value="⭐⭐⭐⭐ (4.0 / Muy Bueno)">⭐⭐⭐⭐ (4.0)</option>
+                    <option value="⭐⭐⭐ (3.0 / Aceptable)">⭐⭐⭐ (3.0)</option>
+                </select>
+                <button onclick="gradeArt(${item.id})">Evaluar</button>
+            </div>
+        `;
+        galleryContainer.appendChild(card);
+    });
+}
+
+function toggleMenu(event, artId){
+    event.stopPropagation();
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if(menu.id !== `dropdown-${artId}`){
+            menu.classList.remove('show');
+        }
+    });
+    const targetMenu = document.getElementById(`dropdown-${artId}`);
+    if(targetMenu){
+        targetMenu.classList.toggle('show');
+    }
+}
+
+// Cerrar desplegables si se hace clic afuera
+window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
+});
+
+function deleteArt(artId){
+    if(confirm("🚨 ¿Estás seguro de que deseas eliminar esta obra por contenido inadecuado u obsceno?")){
+        let galleryData = JSON.parse(localStorage.getItem("gallery_drawings") || "[]");
+        galleryData = galleryData.filter(item => item.id !== artId);
+        localStorage.setItem("gallery_drawings", JSON.stringify(galleryData));
+        renderGallery();
+        alert("🗑️ Obra eliminada de la exposición.");
+    }
+}
+
+function gradeArt(artId){
+    let galleryData = JSON.parse(localStorage.getItem("gallery_drawings") || "[]");
+    const selectedGrade = document.getElementById(`select-grade-${artId}`).value;
+
+    const itemIndex = galleryData.findIndex(item => item.id === artId);
+    if(itemIndex !== -1){
+        galleryData[itemIndex].grade = selectedGrade;
+        localStorage.setItem("gallery_drawings", JSON.stringify(galleryData));
+        document.getElementById(`grade-${artId}`).textContent = selectedGrade;
+        alert("⭐ ¡Calificación guardada e informada al estudiante!");
+    }
+}
+
+// NAVEGACIÓN Y TABLA
+function show(id, btn){
+    document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    if(btn){
+        document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+        btn.classList.add("active");
+    }
+
+    if(id === "gallery"){
+        renderGallery();
+    }
+
+    if(id === "ranking"){
+        updateResult();
+    }
+}
+
+function updateResult(){
+    saveToLeaderboard(playerName, activeRoomCode, score);
+    renderLeaderboard();
+}
+
+function saveToLeaderboard(name, room, points){
+    if(!name) return;
+    let leaderboard = JSON.parse(localStorage.getItem("lan_room_leaderboard") || "[]");
+    
+    const existingIndex = leaderboard.findIndex(item => item.name === name && item.room === room);
+    if(existingIndex !== -1){
+        leaderboard[existingIndex].points = Math.max(leaderboard[existingIndex].points, points);
+    } else {
+        leaderboard.push({ name, room, points });
+    }
+
+    leaderboard.sort((a,b) => b.points - a.points);
+    leaderboard = leaderboard.slice(0, 35);
+    localStorage.setItem("lan_room_leaderboard", JSON.stringify(leaderboard));
+}
+
+function renderLeaderboard(){
+    const leaderboard = JSON.parse(localStorage.getItem("lan_room_leaderboard") || "[]");
+    const tbody = document.getElementById("leaderboardBody");
+    tbody.innerHTML = "";
+
+    if(leaderboard.length === 0){
+        tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Aún no hay puntuaciones registradas.</td></tr>";
+        return;
+    }
+
+    leaderboard.forEach((item, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><b>${index + 1}</b></td>
+            <td>${item.name}</td>
+            <td><span class="badge" style="padding:2px 8px; font-size:0.75rem;">${item.room}</span></td>
+            <td><b>${item.points} pts</b></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+</script>
+
+</body>
+</html>
